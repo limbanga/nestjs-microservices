@@ -5,9 +5,9 @@ import { ApiGatewayService } from './api-gateway.service';
 export class ApiGatewayController {
   constructor(private readonly apiGatewayService: ApiGatewayService) {}
 
-  @Get('products')
-  async getProducts() {
-    return 'sfjal';
+  @Get()
+  async getHello() {
+    return 'API Gateway is here!';
   }
 
 }
