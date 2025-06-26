@@ -4,6 +4,7 @@ import { UserServiceService } from './user-service.service';
 import { RegisterDto } from '@app/contracts/user/dto/register.dto';
 import { LoginDto } from '@app/contracts/user/dto/login.dto';
 import { UserMessagePattern } from '@app/contracts/user/patterns';
+import { UpdateUserDto } from '@app/contracts/user/dto/update-user.dto';
 
 @Controller()
 export class UserServiceController {
@@ -28,5 +29,10 @@ export class UserServiceController {
   @MessagePattern({ cmd: UserMessagePattern.FIND_ONE })
   async findOne(@Payload() id: string) {
     return this.userServiceService.findOne(id);
+  }
+
+  @MessagePattern({ cmd: UserMessagePattern.UPDATE })
+  async update(@Payload() payload: { id: string; dto: UpdateUserDto }) {
+    return this.userServiceService.update(payload.id, payload.dto);
   }
 }

@@ -7,6 +7,7 @@ import { UserResponseDto } from '@app/contracts/user/dto/user-response.dto';
 import { RegisterDto } from '@app/contracts/user/dto/register.dto';
 import { LoginDto } from '@app/contracts/user/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateUserDto } from '@app/contracts/user/dto/update-user.dto';
 
 @Injectable()
 export class UserServiceService {
@@ -60,5 +61,16 @@ export class UserServiceService {
     if (!user) throw new NotFoundException(`User not found`);
     return UserResponseDto.fromEntity(user);
   }
+
+  async update(id: string, dto: UpdateUserDto): Promise<UserResponseDto> {
+  const user = await this.userRepository.findOneBy({ id });
+  if (!user) throw new NotFoundException('User not found');
+
+  Object.assign(user, dto);
+  user.updatedAt = new Date();
+
+  const updated = await this.userRepository.save(user);
+  return UserResponseDto.fromEntity(updated);
+}
 
 }

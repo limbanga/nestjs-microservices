@@ -3,4 +3,5 @@ export enum UserMessagePattern {
   REGISTER = 'user_register',
   FIND_ALL = 'user_find_all',
   FIND_ONE = 'user_find_one',
+  UPDATE = 'user_update',
 }

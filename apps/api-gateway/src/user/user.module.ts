@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
+import { JwtStrategy } from 'apps/api-gateway/common/strategies/jwt.strategy';
 
 @Module({
   providers: [
@@ -18,6 +19,7 @@ import { UserController } from './user.controller';
       },
     },
     UserService,
+    JwtStrategy,
   ],
   controllers: [UserController],
 })
