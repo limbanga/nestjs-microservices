@@ -1,0 +1,116 @@
+version: '3.9'
+
+services:
+  postgres-user:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${USER_DB_USERNAME}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata-user:/var/lib/postgresql/data
+
+  postgres-project:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${PROJECT_DB_USERNAME}
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD}
+      POSTGRES_DB: ${PROJECT_DB_NAME}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata-project:/var/lib/postgresql/data
+
+  postgres-task:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${TASK_DB_USERNAME}
+      POSTGRES_PASSWORD: ${TASK_DB_PASSWORD}
+      POSTGRES_DB: ${TASK_DB_NAME}
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata-task:/var/lib/postgresql/data
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run start:dev api-gateway
+    volumes:
+      - .:/app
+    ports:
+      - "${API_GATEWAY_PORT}:3000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+    depends_on:
+      - user-service
+      - project-service
+      - task-service
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run start:dev user-service
+    volumes:
+      - .:/app
+    ports:
+      - "${USER_SERVICE_PORT}:4000"
+    depends_on:
+      - postgres-user
+    environment:
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+      USER_DB_USERNAME: ${USER_DB_USERNAME}
+      USER_DB_PASSWORD: ${USER_DB_PASSWORD}
+      USER_DB_NAME: ${USER_DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+
+  project-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run start:dev project-service
+    volumes:
+      - .:/app
+    ports:
+      - "${PROJECT_SERVICE_PORT}:5000"
+    depends_on:
+      - postgres-project
+    environment:
+      PROJECT_DB_HOST: ${PROJECT_DB_HOST}
+      PROJECT_DB_PORT: ${PROJECT_DB_PORT}
+      PROJECT_DB_USERNAME: ${PROJECT_DB_USERNAME}
+      PROJECT_DB_PASSWORD: ${PROJECT_DB_PASSWORD}
+      PROJECT_DB_NAME: ${PROJECT_DB_NAME}
+
+  task-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run start:dev task-service
+    volumes:
+      - .:/app
+    ports:
+      - "${TASK_SERVICE_PORT}:6000"
+    depends_on:
+      - postgres-task
+    environment:
+      TASK_DB_HOST: ${TASK_DB_HOST}
+      TASK_DB_PORT: ${TASK_DB_PORT}
+      TASK_DB_USERNAME: ${TASK_DB_USERNAME}
+      TASK_DB_PASSWORD: ${TASK_DB_PASSWORD}
+      TASK_DB_NAME: ${TASK_DB_NAME}
+
+volumes:
+  pgdata-user:
+  pgdata-project:
+  pgdata-task:

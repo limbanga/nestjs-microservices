@@ -3,17 +3,20 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { JwtStrategy } from 'apps/api-gateway/common/strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
+  imports: [ConfigModule.forRoot({ isGlobal: true })],
   providers: [
     {
       provide: 'USER_SERVICE',
-      useFactory: () => {
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: '127.0.0.1',
-            port: 4000, // Port của UserService
+            host: configService.get('USER_SERVICE_HOST', 'localhost'),
+            port: parseInt(configService.get('USER_SERVICE_PORT', '4000'), 10),
           },
         });
       },

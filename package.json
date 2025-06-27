@@ -17,7 +17,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/nestjs-microservices/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/nestjs-microservices/test/jest-e2e.json",
+    
+    "start:dev api-gateway": "nest start apps/api-gateway --watch",
+    "start:dev user-service": "nest start apps/user-service --watch",
+    "start:dev project-service": "nest start apps/project-service --watch",
+    "start:dev task-service": "nest start apps/task-service --watch"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
